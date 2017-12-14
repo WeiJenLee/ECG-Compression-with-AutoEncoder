@@ -8,7 +8,7 @@ from scipy.io import savemat
 def test(spec, path):
     norm = spec['norm']
     pvc = spec['pvc']
-    data = np.concatenate([norm, pvc], axis=0)
+    data = np.concatenate([norm[:, ::-1], pvc[:, :-1]], axis=0)
     #data = norm
     os.system("mkdir -p "+path)
 
