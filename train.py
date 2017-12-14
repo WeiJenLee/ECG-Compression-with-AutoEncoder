@@ -2,7 +2,7 @@ import time, os, pickle
 import math, random
 import numpy as np
 import tensorflow as tf
-from ae import(z_dim, input_dim,
+from model import(z_dim, input_dim,
                DAE, VAE)
 
 iter_num = 50000

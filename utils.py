@@ -73,3 +73,29 @@ def kld(mu1, lv1, mu2, lv2):
             (lv2 - lv1) + tf.div(v1 + mu_diff_sq, v2 + EPSILON) - 1.)
         return tf.reduce_sum(dimwise_kld, -1)
 
+def _compute_gradient_penalty(self, J, x, scope_name='GradientPenalty'):
+        ''' Gradient Penalty
+        Input:
+            `J`: the loss
+            `x`: shape = [b, f]
+        '''
+    with tf.name_scope(scope_name):
+        grad = tf.gradients(J, x)[0]  # as the output is a list, [0] is needed
+        grad_square = tf.square(grad)
+        grad_squared_norm = tf.reduce_sum(grad_square, axis=1)
+        grad_norm = tf.sqrt(grad_squared_norm)
+        # penalty = tf.square(tf.nn.relu(grad_norm - 1.)) # FIXME: experimental
+        penalty = tf.square(grad_norm - 1.)
+    return tf.reduce_mean(penalty)
+
+
+def GaussianLogDensity(x, mu, log_var, name='GaussianLogDensity'):
+    with tf.name_scope(name):
+        c = tf.log(2. * PI)
+        var = tf.exp(log_var)
+        x_mu2 = tf.square(x - mu)   # [Issue] not sure the dim works or not?
+        x_mu2_over_var = tf.div(x_mu2, var + EPSILON)
+        log_prob = -0.5 * (c + log_var + x_mu2_over_var)
+        log_prob = tf.reduce_sum(log_prob, -1)   # keep_dims=True,
+        return log_prob
+
