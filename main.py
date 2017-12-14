@@ -7,9 +7,9 @@ from read import load_train_data, load_test_data
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser('')
-    parser.add_argument('--gpus', type=str, default='2') #determine gpu to use
-    parser.add_argument('--mode', type=str, default='train') 
+    parser.add_argument('--gpus', type=str) #determine gpu to use
     parser.add_argument('--path', type=str) #determine path to save
+    parser.add_argument('--mode', type=str) 
     
     args = parser.parse_args()
     os.environ['CUDA_VISIBLE_DEVICES'] = args.gpus
