@@ -8,7 +8,8 @@ from scipy.io import savemat
 def test(spec, path):
     norm = spec['norm']
     pvc = spec['pvc']
-    data = np.concatenate([norm[:, ::-1], pvc[:, :-1]], axis=0)
+    label = spec['label']
+    data = np.concatenate([norm, pvc], axis=0)
     #data = norm
     os.system("mkdir -p "+path)
 
@@ -25,8 +26,8 @@ def test(spec, path):
     #print('MSE: %.4f COR: %.4f' % loss['pmse'], loss['corr'])
     print(loss)
     #print(data[0], x_h[0])
-    label = np.concatenate([norm[:, -1], pvc[:, -1]], axis=0)
-    data = np.concatenate([data, label], axis=1)
-    x_h = np.concatenate([x_h, label], axis=1)
+    with open('label.txt', 'w') as f:
+        for lab in label:
+            f.write('%s\n' %lab)
     savemat('origin', mdict={'ecg': data})
     savemat('recons', mdict={'ecg': x_h})

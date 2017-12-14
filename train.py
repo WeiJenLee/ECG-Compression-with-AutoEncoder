@@ -13,7 +13,7 @@ def train(data, path):
     os.system("mkdir -p " + path)
     norm = data['norm']
     pvc = data['pvc']
-    feat = np.concatenate([norm[:, :-1], pvc[:, :-1]], axis=0)
+    feat = np.concatenate([norm, pvc], axis=0)
     #feat = norm
     x = tf.placeholder(tf.float32, [None, input_dim], name='x')
     z = tf.placeholder(tf.float32, [None, z_dim], name='z')

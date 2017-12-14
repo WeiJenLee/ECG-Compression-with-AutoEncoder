@@ -3,3 +3,4 @@ datadet
 .DS_Store
 logs/
 *.mat
+*.txt
