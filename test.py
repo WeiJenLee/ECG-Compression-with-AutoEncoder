@@ -18,6 +18,8 @@ def test(spec, path):
     loss = graph.loss(data)
     z = graph._encode(data)
     x_h = graph._decode(z)
+    data = np.reshape(data, (-1, 350))
+    x_h = np.reshape(x_h, (-1, 350))
         #print('Loss: %.4f' % loss)
         #count += loss
     #print('MSE: %.4f COR: %.4f' % loss['pmse'], loss['corr'])
