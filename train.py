@@ -2,8 +2,7 @@ import time, os, pickle
 import math, random
 import numpy as np
 import tensorflow as tf
-from model import(z_dim, input_dim,
-               DAE, VAE)
+from model import(z_dim, input_dim, DAE)
 
 iter_num = 50000
 batch_num = 64
@@ -24,8 +23,9 @@ def train(data, path):
     x_h = model.decode(z)
     tf.add_to_collection('encode', _z)
     tf.add_to_collection('decode', x_h)
-    tf.add_to_collection('loss', loss['pmse'])
-    w_loss = loss['pmse'] - loss['corr']
+    tf.add_to_collection('prd', loss['pmse'])
+    tf.add_to_collection('cc', loss['corr'])
+    w_loss = 60*loss['pmse'] - 40*loss['corr']
 
     optimize = tf.train.AdamOptimizer(learning_rate=5e-5, beta1=0.9, beta2=0.99).minimize(w_loss)
     #optimize = tf.train.RMSPropOptimizer(learning_rate=1e-5).minimize(loss)

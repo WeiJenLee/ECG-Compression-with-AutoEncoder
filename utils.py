@@ -1,11 +1,13 @@
 import tensorflow as tf
+from math import pi
 
 EPSILON = 1e-5
+PI = tf.constant(pi, dtype=tf.float32)
 
 def nn(inputs, dim, name, training):
     outputs=tf.layers.dense(inputs, dim)
-    #outputs = tf.layers.batch_normalization(outputs)
-    #outputs = tf.nn.relu(outputs, name=name)
+    outputs = tf.layers.batch_normalization(outputs)
+    outputs = tf.nn.relu(outputs, name=name)
     return outputs
 
 def cnn(inputs, channel, kernel, stride, name, training):
@@ -64,21 +66,20 @@ def logpx(x, mu, log_var, name='GaussianLogDensity'):
         log_prob = tf.reduce_sum(log_prob, -1)   # keep_dims=True,
         return log_prob
 
-def kld(mu1, lv1, mu2, lv2):
-    with tf.name_scope('GaussianKLD'):
+def kld(mu1, lv1, name='KLD'):
+    with tf.name_scope(name):
+        mu2 = tf.zeros_like(mu1)
+        lv2 = tf.zeros_like(lv1)
         v1 = tf.exp(lv1)
         v2 = tf.exp(lv2)
         mu_diff_sq = tf.square(mu1 - mu2)
         dimwise_kld = .5 * (
             (lv2 - lv1) + tf.div(v1 + mu_diff_sq, v2 + EPSILON) - 1.)
         return tf.reduce_sum(dimwise_kld, -1)
+    #with tf.name_scope('GaussianKLD'):
+    #    return -0.5*tf.reduce_sum(1+lv-tf.square(mu)-tf.exp(lv), axis=1)
 
 def _compute_gradient_penalty(self, J, x, scope_name='GradientPenalty'):
-        ''' Gradient Penalty
-        Input:
-            `J`: the loss
-            `x`: shape = [b, f]
-        '''
     with tf.name_scope(scope_name):
         grad = tf.gradients(J, x)[0]  # as the output is a list, [0] is needed
         grad_square = tf.square(grad)
@@ -98,4 +99,8 @@ def GaussianLogDensity(x, mu, log_var, name='GaussianLogDensity'):
         log_prob = -0.5 * (c + log_var + x_mu2_over_var)
         log_prob = tf.reduce_sum(log_prob, -1)   # keep_dims=True,
         return log_prob
+
+def cross_entropy(x, y, name='Cross_Entropy'):
+    with tf.name_scope(name):
+        return -tf.reduce_sum(x*tf.log(y) + (1-x)*tf.log(1-y), axis=1)
 

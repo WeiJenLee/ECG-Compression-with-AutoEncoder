@@ -11,7 +11,8 @@ class ImportGraph():
             saver.restore(self.sess, self.path+'test_best_model')
             self.encode=tf.get_collection('encode')[0]
             self.decode=tf.get_collection('decode')[0]
-            self.err = tf.get_collection('loss')
+            self.pmse = tf.get_collection('prd')
+            self.corr = tf.get_collection('cc')
 
     def _encode(self, data):
         return self.sess.run(self.encode, feed_dict={'x:0': data})
@@ -19,5 +20,10 @@ class ImportGraph():
     def _decode(self, data):
         return self.sess.run(self.decode, feed_dict={'z:0': data})
 
-    def loss(self, x):
-        return self.sess.run(self.err, feed_dict={'x:0': x})
+    def prd(self, x):
+        return self.sess.run(self.pmse, feed_dict={'x:0': x})
+
+    def cc(self, x):
+        return self.sess.run(self.corr, feed_dict={'x:0': x})
+
+
